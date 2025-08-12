@@ -1,4 +1,4 @@
-name = "Etherium login"
+name = "etherium-login"
 account_id = "20c270570eda3ae89ef7d7a6d2ca1c8f"
 workers_dev = true
 
