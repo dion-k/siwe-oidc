@@ -1,17 +1,17 @@
 name = "siwe_oidc"
 type = "javascript"
-account_id = ""
+account_id = "20c270570eda3ae89ef7d7a6d2ca1c8f"
 # zone_id = ""
 workers_dev = false
 compatibility_date = "2021-12-20"
 
 kv_namespaces = [
-    { binding = "SIWE_OIDC", id = "", preview_id = "" }
+    { binding = "SIWE_OIDC", id = "999bb2a57214404ba34634d91a84d81c", preview_id = "" }
 ]
 
 [vars]
 WORKERS_RS_VERSION = "0.0.9"
-BASE_URL = "https://siweoidc.spruceid.xyz"
+BASE_URL = "https://etherium.kitsos.net"
 # ETH_PROVIDER = ""
 
 [durable_objects]
