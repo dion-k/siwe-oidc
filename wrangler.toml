@@ -1,39 +1,37 @@
-name = "etherium-login"
-account_id = "20c270570eda3ae89ef7d7a6d2ca1c8f"
+# ---- BASIS ----
+name = "etherium-login"                 # nur klein, zahlen, -  (keine Leerzeichen!)
+account_id = "20c270570eda3ae89ef7d7a6d2ca1c8f"    # aus Cloudflare Dashboard
 workers_dev = true
-
-# Neuer Wrangler erwartet einen klaren Entry-Point
-main = "build/worker/shim.mjs"
-
-# Nimm ein aktuelles Datum (>= heute)
+main = "build/worker/shim.mjs"     # Entry-Point der gebauten Worker-Datei
 compatibility_date = "2025-08-01"
 
-# --- Build (Rust -> WASM -> Worker) ---
+# ---- BUILD (Rust -> WASM) ----
+# Installiert Rust + worker-build im CI und baut dann das Projekt.
 [build]
-# wrangler startet diesen Befehl im Git-Build automatisch
-command = "cargo install -q worker-build && worker-build --release"
+command = """
+curl -sSf https://sh.rustup.rs | sh -s -- -y && \
+. $HOME/.cargo/env && \
+cargo install -q worker-build && \
+worker-build --release
+"""
 
-# --- KV-Bindings (Nonces/Sessions) ---
+# ---- KV BINDINGS (TOP-LEVEL, NICHT im [build]!) ----
 kv_namespaces = [
   { binding = "SIWE_OIDC", id = "999bb2a57214404ba34634d91a84d81c" }
 ]
 
-# --- Variablen ---
-[vars]
-# Öffentliche Basis-URL (muss deiner späteren Subdomain entsprechen)
-BASE_URL = "https://etherium.kitsos.net"
-# Für das Frontend (WalletConnect/Reown). Du brauchst die gleiche ID auch im Pages-Build.
-PROJECT_ID = "b31ec02f65138b70d5a5f0ebbd5d03bd"
-# Optional, falls du einen eigenen RPC-Provider setzen willst:
-# ETH_PROVIDER = "https://..." 
-
-# --- Durable Object für Auth Codes ---
+# ---- DURABLE OBJECTS ----
 [durable_objects]
 bindings = [
   { name = "SIWE-OIDC-CODES", class_name = "DOCodes" }
 ]
 
-# Migration für das Durable Object (einmalig)
 [[migrations]]
 tag = "v1"
 new_classes = ["DOCodes"]
+
+# ---- ENV VARS ----
+[vars]
+BASE_URL = "https://etherium.kitsos.net"     # exakt deine spätere Subdomain
+PROJECT_ID = "b31ec02f65138b70d5a5f0ebbd5d03bd"          # WalletConnect/Reown Project ID
+# ETH_PROVIDER = "https://..."                  # optional eigener RPC
