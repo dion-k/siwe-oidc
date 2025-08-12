@@ -1,36 +1,39 @@
-name = "siwe_oidc"
-type = "javascript"
+name = "Etherium login"
 account_id = "20c270570eda3ae89ef7d7a6d2ca1c8f"
-# zone_id = ""
-workers_dev = false
-compatibility_date = "2021-12-20"
+workers_dev = true
 
+# Neuer Wrangler erwartet einen klaren Entry-Point
+main = "build/worker/shim.mjs"
+
+# Nimm ein aktuelles Datum (>= heute)
+compatibility_date = "2025-08-01"
+
+# --- Build (Rust -> WASM -> Worker) ---
+[build]
+# wrangler startet diesen Befehl im Git-Build automatisch
+command = "cargo install -q worker-build && worker-build --release"
+
+# --- KV-Bindings (Nonces/Sessions) ---
 kv_namespaces = [
-    { binding = "SIWE_OIDC", id = "999bb2a57214404ba34634d91a84d81c", preview_id = "" }
+  { binding = "SIWE_OIDC", id = "999bb2a57214404ba34634d91a84d81c" }
 ]
 
+# --- Variablen ---
 [vars]
-WORKERS_RS_VERSION = "0.0.9"
+# Öffentliche Basis-URL (muss deiner späteren Subdomain entsprechen)
 BASE_URL = "https://etherium.kitsos.net"
-# ETH_PROVIDER = ""
+# Für das Frontend (WalletConnect/Reown). Du brauchst die gleiche ID auch im Pages-Build.
+PROJECT_ID = "b31ec02f65138b70d5a5f0ebbd5d03bd"
+# Optional, falls du einen eigenen RPC-Provider setzen willst:
+# ETH_PROVIDER = "https://..." 
 
+# --- Durable Object für Auth Codes ---
 [durable_objects]
 bindings = [
   { name = "SIWE-OIDC-CODES", class_name = "DOCodes" }
 ]
 
+# Migration für das Durable Object (einmalig)
 [[migrations]]
 tag = "v1"
 new_classes = ["DOCodes"]
-
-[build]
-command = "cargo install -q worker-build --version 0.0.8 && worker-build --release"
-
-[build.upload]
-dir    = "build/worker"
-format = "modules"
-main   = "./shim.mjs"
-
-[[build.upload.rules]]
-globs = ["**/*.wasm"]
-type  = "CompiledWasm"
