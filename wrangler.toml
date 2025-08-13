@@ -14,7 +14,7 @@ curl -sSf https://sh.rustup.rs | sh -s -- -y && \
 rustup toolchain install 1.74.0 && \
 rustup default 1.74.0 && \
 rustup target add wasm32-unknown-unknown --toolchain 1.74.0 && \
-cargo +1.74.0 install -q worker-build && \
+cargo +1.74.0 install worker-build --locked && \
 worker-build --release
 """
 
